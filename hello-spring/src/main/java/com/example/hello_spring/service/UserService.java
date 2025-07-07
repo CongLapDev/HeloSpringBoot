@@ -3,6 +3,8 @@ package com.example.hello_spring.service;
 import com.example.hello_spring.dto.request.UserCreationRequest;
 import com.example.hello_spring.dto.request.UserUpdateRequest;
 import com.example.hello_spring.entity.User;
+import com.example.hello_spring.exception.AppException;
+import com.example.hello_spring.exception.ErrorCode;
 import com.example.hello_spring.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,6 +18,9 @@ public class UserService {
 
     public User createUser(UserCreationRequest request){
         User user = new User();
+
+        if(userRepository.existsByUsername(request.getUsername()))
+            throw new RuntimeException("ErrorCode.USER_EXISTED");
 
         user.setUsername(request.getUsername());
         user.setPassword(request.getPassword());
