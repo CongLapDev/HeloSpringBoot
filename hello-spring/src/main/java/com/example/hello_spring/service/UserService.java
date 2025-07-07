@@ -1,0 +1,56 @@
+package com.example.hello_spring.service;
+
+import com.example.hello_spring.dto.request.UserCreationRequest;
+import com.example.hello_spring.dto.request.UserUpdateRequest;
+import com.example.hello_spring.entity.User;
+import com.example.hello_spring.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class UserService {
+    @Autowired
+    private UserRepository userRepository;
+
+    public User createUser(UserCreationRequest request){
+        User user = new User();
+
+        user.setUsername(request.getUsername());
+        user.setPassword(request.getPassword());
+        user.setFirstname(request.getFirstname());
+        user.setLastname(request.getLastname());
+        user.setDob(request.getDob());
+
+        return  userRepository.save(user);
+    }
+
+    public User updateUser(String userId, UserUpdateRequest request){
+        User user = getUser(userId);
+
+        user.setPassword(request.getPassword());
+        user.setFirstname(request.getFirstname());
+        user.setLastname(request.getLastname());
+        user.setDob(request.getDob());
+
+       return userRepository.save(user);
+    }
+
+
+    public void deleteUser(String userId){
+        User user = userRepository.findById(userId).orElseThrow( () -> new RuntimeException("User not found"));
+        userRepository.delete(user);
+    }
+
+    public List<User> getUsers() {
+        return userRepository.findAll();
+    }
+
+    public User getUser(String id){
+        return userRepository.findById(id).orElseThrow( () -> new RuntimeException("User not found"));
+
+    }
+
+
+}
