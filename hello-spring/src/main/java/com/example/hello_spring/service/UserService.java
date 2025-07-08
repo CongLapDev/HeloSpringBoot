@@ -8,6 +8,8 @@ import com.example.hello_spring.exception.ErrorCode;
 import com.example.hello_spring.mapper.UserMapper;
 import com.example.hello_spring.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,7 +26,8 @@ public class UserService {
             throw new RuntimeException("ErrorCode.USER_EXISTED");
 
         User user = userMapper.toUser(request);
-
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
 
         return  userRepository.save(user);
     }
