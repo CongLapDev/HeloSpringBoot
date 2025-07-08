@@ -5,6 +5,7 @@ import com.example.hello_spring.dto.request.UserUpdateRequest;
 import com.example.hello_spring.entity.User;
 import com.example.hello_spring.exception.AppException;
 import com.example.hello_spring.exception.ErrorCode;
+import com.example.hello_spring.mapper.UserMapper;
 import com.example.hello_spring.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,18 +16,15 @@ import java.util.List;
 public class UserService {
     @Autowired
     private UserRepository userRepository;
-
+    @Autowired
+    private UserMapper userMapper;
     public User createUser(UserCreationRequest request){
-        User user = new User();
 
         if(userRepository.existsByUsername(request.getUsername()))
             throw new RuntimeException("ErrorCode.USER_EXISTED");
 
-        user.setUsername(request.getUsername());
-        user.setPassword(request.getPassword());
-        user.setFirstname(request.getFirstname());
-        user.setLastname(request.getLastname());
-        user.setDob(request.getDob());
+        User user = userMapper.toUser(request);
+
 
         return  userRepository.save(user);
     }
@@ -34,10 +32,7 @@ public class UserService {
     public User updateUser(String userId, UserUpdateRequest request){
         User user = getUser(userId);
 
-        user.setPassword(request.getPassword());
-        user.setFirstname(request.getFirstname());
-        user.setLastname(request.getLastname());
-        user.setDob(request.getDob());
+        userMapper.updateUser(user, request);
 
        return userRepository.save(user);
     }
