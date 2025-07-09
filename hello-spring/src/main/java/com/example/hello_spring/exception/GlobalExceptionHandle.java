@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @ControllerAdvice
-
 public class GlobalExceptionHandle {
 
     @ExceptionHandler(value = Exception.class)
@@ -24,21 +23,30 @@ public class GlobalExceptionHandle {
     ResponseEntity<ApiResponse> handlingAppException(AppException exception){
         ErrorCode errorCode = exception.getErrorCode();
         ApiResponse apiResponse = new ApiResponse();
+
         apiResponse.setCode(errorCode.getCode());
         apiResponse.setMessage(errorCode.getMessage());
+
         return ResponseEntity.badRequest().body(apiResponse);
     }
 
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
     ResponseEntity<ApiResponse> handlingValidation(MethodArgumentNotValidException exception){
-       String enumkey = exception.getFieldError().getDefaultMessage();
-       ErrorCode errorCode = ErrorCode.valueOf(enumkey);
+        String enumKey = exception.getFieldError().getDefaultMessage();
 
-       ApiResponse apiResponse = new ApiResponse();
+        ErrorCode errorCode = ErrorCode.INVALID_KEY;
 
-       apiResponse.setCode(errorCode.getCode());
-       apiResponse.setMessage(errorCode.getMessage());
+        try {
+            errorCode = ErrorCode.valueOf(enumKey);
+        } catch (IllegalArgumentException e){
 
-       return ResponseEntity.badRequest().body(apiResponse);
+        }
+
+        ApiResponse apiResponse = new ApiResponse();
+
+        apiResponse.setCode(errorCode.getCode());
+        apiResponse.setMessage(errorCode.getMessage());
+
+        return ResponseEntity.badRequest().body(apiResponse);
     }
 }

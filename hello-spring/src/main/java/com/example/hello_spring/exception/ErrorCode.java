@@ -4,6 +4,7 @@ public enum ErrorCode {
 
     UNCATEGORIZED(   9999,  "Uncategorized error"),
 
+    INVALID_KEY(1001, "Uncategorized error"),
 
     USER_EXISTED(  1002,  "User exits"),
 
